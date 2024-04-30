@@ -1,0 +1,66 @@
+Activity_main.xml:
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <VideoView
+                android:id="@+id/videoview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</RelativeLayout>
+
+MainActivity.java:
+
+package com.example.video_player;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Bundle;
+import android.widget.MediaController;
+import android.widget.VideoView;
+
+public class MainActivity extends AppCompatActivity {
+
+    VideoView videoView;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        videoView=findViewById(R.id.videoview);
+
+        videoView.setVideoPath("android.resource://"+getPackageName()+"/"+R.raw.sample);
+
+        videoView.start();
+
+        MediaController mediaController=new MediaController(this);
+
+        mediaController.setAnchorView(videoView);
+
+        videoView.setMediaController(mediaController);
+
+
+    }
+}
+

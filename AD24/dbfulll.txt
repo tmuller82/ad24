@@ -1,0 +1,186 @@
+package com.example.prac3;
+
+import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+public class MainActivity extends AppCompatActivity {
+    DBHelper DB;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        EditText name=findViewById(R.id.editTextTextPersonName);
+        EditText pass=findViewById(R.id.editTextTextPassword);
+        EditText repass=findViewById(R.id.editTextTextPassword2);
+        Button reg=findViewById(R.id.button);
+        Button log=findViewById(R.id.login);
+        DB = new DBHelper(this);
+        log.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String username = name.getText().toString();
+                String password = pass.getText().toString();
+
+                // Check if the username and password match any user in the database
+                boolean loginSuccess = DB.checkUserCredentials(username, password);
+
+                if (loginSuccess) {
+                    Toast.makeText(MainActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
+                    // Add code here to navigate to the next activity or perform any other action upon successful login
+                } else {
+                    Toast.makeText(MainActivity.this, "Invalid username or password", Toast.LENGTH_SHORT).show();
+                }
+            }
+            });
+
+
+        reg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String name1=name.getText().toString();
+                String pass1=pass.getText().toString();
+                String repass1=repass.getText().toString();
+                if(pass1.equals(repass1)){
+                    Boolean checkuser=DB.checkusername(name1);
+                    if(!checkuser){
+                        Boolean insert=DB.inserdata(name1,pass1);
+                        if(insert){
+                            Toast.makeText(MainActivity.this,"Registration Succesfull",Toast.LENGTH_SHORT).show();
+                        } else
+                            Toast.makeText(MainActivity.this,"Registration UnSuccesfull",Toast.LENGTH_SHORT).show();
+                    }
+                    else Toast.makeText(MainActivity.this,"user already registerd",Toast.LENGTH_SHORT).show(); } } });
+    } }
+xml file
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <EditText
+        android:id="@+id/editTextTextPersonName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="52dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="First_Name"
+        android:text=""
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.432"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:importantForAutofill="no" />
+
+    <EditText
+        android:id="@+id/editTextTextPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
+        android:hint="Password"
+        android:ems="10"
+        android:inputType="textPassword"
+        app:layout_constraintEnd_toEndOf="@+id/editTextTextPersonName"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/editTextTextPersonName"
+        app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName" />
+
+    <EditText
+        android:id="@+id/editTextTextPassword2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="52dp"
+        android:ems="10"
+        android:inputType="textPassword"
+        app:layout_constraintEnd_toEndOf="@+id/editTextTextPassword"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/editTextTextPassword"
+        app:layout_constraintTop_toBottomOf="@+id/editTextTextPassword" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="64dp"
+        android:text="Create"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextTextPassword2" />
+
+    <Button
+        android:id="@+id/login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Login"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.628" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+db.helper
+package com.example.prac3;
+
+
+
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+public class DBHelper extends SQLiteOpenHelper {
+    public DBHelper(Context context){
+        super(context,"Login.db",null,1);
+    }
+    @Override
+    public void onCreate(SQLiteDatabase Mydb) {
+        Mydb.execSQL("create table users(username text primary key,password text )");
+    }
+    @Override
+    public void onUpgrade(SQLiteDatabase Mydb, int i, int i1) {
+        Mydb.execSQL("drop table if exists users");
+    }
+    public Boolean checkusername(String user){
+        SQLiteDatabase Mydb=this.getWritableDatabase();
+        Cursor cursor = Mydb.rawQuery("select * from users where username=?",new String[]{user});
+        if(cursor.getCount()>0)
+            return true;
+        else return false;
+    }
+    public Boolean inserdata(String user,String Password){
+        SQLiteDatabase Mydb=this.getWritableDatabase();
+        ContentValues contentValues=new ContentValues();
+        contentValues.put("username",user);
+        contentValues.put("password",Password);
+        long result=Mydb.insert("users",null,contentValues);
+        if(result==-1)
+            return false;
+        else
+            return true; }
+    public boolean checkUserCredentials(String username, String password) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM users WHERE username = ? AND password = ?", new String[]{username, password});
+
+        if (cursor.getCount() > 0) {
+            cursor.close();
+            return true;
+        } else {
+            cursor.close();
+            return false;
+        }
+    }
+}
+

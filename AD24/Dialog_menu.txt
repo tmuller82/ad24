@@ -1,0 +1,390 @@
+Activity_main.xml:
+
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/titleId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="234dp"
+        android:layout_marginEnd="134dp"
+        android:text="LOGIN HERE"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/buttonId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="19dp"
+        android:layout_marginBottom="40dp"
+        android:onClick="showPopUp"
+        android:text="Button"
+        app:layout_constraintBottom_toTopOf="@+id/dialogButtonId"
+        app:layout_constraintStart_toStartOf="@+id/dialogButtonId" />
+
+    <TextView
+        android:id="@+id/userNameId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="Username"
+        app:layout_constraintStart_toStartOf="@+id/titleId"
+        app:layout_constraintTop_toBottomOf="@+id/titleId" />
+
+    <TextView
+        android:id="@+id/passwordId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="37dp"
+        android:text="Password"
+        app:layout_constraintStart_toStartOf="@+id/userNameId"
+        app:layout_constraintTop_toBottomOf="@+id/userNameId" />
+
+    <Button
+        android:id="@+id/dialogButtonId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="123dp"
+        android:text="Open Dialog"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+Dialog.xml:
+
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".DialogSetter">
+
+    <EditText
+        android:id="@+id/edittextpersonname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Username"
+        android:ems="10"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toTopOf="@+id/edittextpassword"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/edittextpassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Password"
+        android:ems="10"
+        android:inputType="textPassword"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+Under Menu Folder:
+
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <item
+        android:id="@+id/settingID"
+        android:title="Settings"
+        app:showAsAction="withText" />
+
+    <item
+        android:id="@+id/contactID"
+        android:title="Contact US"
+        app:showAsAction="withText"/>
+
+    <item
+        android:id="@+id/shareID"
+        android:title="Share"
+        app:showAsAction="withText"/>
+
+</menu>
+Popup_menu.xml:
+
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/openID"
+        android:title="OPEN"
+        app:showAsAction="withText"/>
+
+
+    <item
+        android:title="EDIT"
+        android:id="@+id/editID"
+        app:showAsAction="withText"/>
+
+    <item
+        android:id="@+id/fileID"
+        android:title="FILE"
+        app:showAsAction="withText">
+
+        <menu>
+            <item
+
+                android:id="@+id/newID"
+                android:title="NEW"
+                app:showAsAction="withText"/>
+
+            <item
+                android:id="@+id/renameID"
+                android:title="RENAME"
+                app:showAsAction="withText"/>
+        </menu>
+    </item>
+
+</menu>
+
+MainActivity.java:
+
+package com.example.prac5;
+
+
+
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.annotation.SuppressLint;
+import android.os.Bundle;
+import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.PopupMenu;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.zip.Inflater;
+
+public class MainActivity extends AppCompatActivity implements DialogSetter.ExampleDialogListener{
+
+    TextView username,password;
+
+    @Override
+    public void applyTexts(String uname, String pass) {
+        username.setText(uname);
+        password.setText(pass);
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        MenuInflater menuInflater=(MenuInflater)getMenuInflater();
+        menuInflater.inflate(R.menu.context_menu,menu);
+
+        return onCreateOptionsMenu(menu);
+    }
+
+    public void openDialog()
+    {
+        DialogSetter dialogSetter=new DialogSetter();
+        dialogSetter.show(getSupportFragmentManager(),null);
+    }
+
+    @SuppressLint("NonConstantResourceId")
+    public boolean onOptionsItemSelected(MenuItem menuItem)
+    {
+
+        int itemId = menuItem.getItemId();
+
+        if (itemId == R.id.settingID) {
+            Toast.makeText(this, "Settings", Toast.LENGTH_LONG).show();
+            return true;
+        } else if (itemId == R.id.contactID) {
+            Toast.makeText(this, "Contact", Toast.LENGTH_LONG).show();
+            return true;
+        } else if (itemId == R.id.shareID) {
+            Toast.makeText(this, "Share", Toast.LENGTH_LONG).show();
+            return true;
+        } else {
+            return onOptionsItemSelected(menuItem);
+        }
+
+
+    }
+
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo)
+    {
+        super.onCreateContextMenu(menu,v,menuInfo);
+        menu.setHeaderTitle("Choose a title");
+        MenuInflater menuInflater=getMenuInflater();
+        menuInflater.inflate(R.menu.context_menu,menu);
+    }
+
+    public boolean onContextItemSelected(MenuItem item)
+    {
+        int itemId = item.getItemId();
+
+        if (itemId == R.id.settingID) {
+            Toast.makeText(this, "Settings selected", Toast.LENGTH_LONG).show();
+            return true;
+        } else if (itemId == R.id.shareID) {
+            Toast.makeText(this, "Share selected", Toast.LENGTH_LONG).show();
+            return true;
+        } else if (itemId == R.id.contactID) {
+            Toast.makeText(this, "Contact selected", Toast.LENGTH_LONG).show();
+            return true;
+        } else {
+            return onOptionsItemSelected(item);
+        }
+
+
+    }
+
+    public void showPop(View view){
+
+        PopupMenu popupMenu = new PopupMenu(MainActivity.this, view);
+        popupMenu.inflate(R.menu.popup_menu);
+        popupMenu.show();
+
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener(){
+
+            public boolean onMenuItemClick(MenuItem item){  // Changed to onMenuItemClick
+
+                int itemId = item.getItemId();
+
+                if (itemId == R.id.openID) {
+                    Toast.makeText(MainActivity.this, "Open selected", Toast.LENGTH_LONG).show();  // Changed this to MainActivity.this
+                    return true;
+                } else if (itemId == R.id.editID) {
+                    Toast.makeText(MainActivity.this, "Edit selected", Toast.LENGTH_LONG).show();  // Changed this to MainActivity.this
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
+    }
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        TextView username=findViewById(R.id.userNameId);
+        TextView title=findViewById(R.id.titleId);
+        TextView password=findViewById(R.id.passwordId);
+        Button button=findViewById(R.id.buttonId);
+        Button dialog_btn=findViewById(R.id.dialogButtonId);
+
+        dialog_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openDialog();
+
+            }
+        });
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPop(v);
+
+            }
+        });
+
+        registerForContextMenu(title);
+    }
+
+
+}
+DialogSetter.java:
+
+package com.example.prac5;
+
+
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDialogFragment;
+
+import android.content.Context;
+import android.content.DialogInterface;
+import android.view.View;
+import android.app.Dialog;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class DialogSetter extends AppCompatDialogFragment {
+
+    public interface ExampleDialogListener {
+        public void applyTexts(String uname,String pass);
+    }
+
+    public TextView username,password;
+
+    private ExampleDialogListener exampleDialogListener;
+
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState){
+
+        AlertDialog.Builder builder=new AlertDialog.Builder(getActivity());
+        LayoutInflater layoutInflater=(LayoutInflater)getActivity().getLayoutInflater();
+        View view=layoutInflater.inflate(R.layout.dialog,null);
+        username=view.findViewById(R.id.edittextpersonname);
+        password=view.findViewById(R.id.edittextpassword);
+
+        builder.setView(view).setTitle("Login").setNegativeButton("Cancelled", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+//                Toast.makeText(this, "Cancelled....", Toast.LENGTH_LONG).show();
+
+            }
+        }).setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String uname=username.getText().toString();
+                String pass=password.getText().toString();
+                exampleDialogListener.applyTexts(uname,pass);
+
+
+            }
+
+        });
+
+        return builder.create();
+    }
+
+    @Override
+    public void onAttach(Context context)
+    {
+        super.onAttach(context);
+
+        try{
+            exampleDialogListener=(ExampleDialogListener) context;
+
+        }catch(ClassCastException e)
+        {
+            throw new ClassCastException(context.toString()+"Please Implement ExampleDialogLitener");
+        }
+
+    }
+}
+
