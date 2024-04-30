@@ -1,0 +1,207 @@
+MapsActivity.java
+
+package com.example.maps;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentActivity;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Bundle;
+import android.Manifest;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.example.maps.databinding.ActivityMapsBinding;
+public class MapsActivity extends FragmentActivity implements
+        OnMapReadyCallback {
+    private GoogleMap mMap;
+    private ActivityMapsBinding binding;
+    private LocationListener locationListener;
+    private LocationManager locationManager;
+    private final long MIN_DIST=5;
+    private final long MIN_TIME=1000;
+    private LatLng latLng;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        binding = ActivityMapsBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        SupportMapFragment mapFragment = (SupportMapFragment)
+                getSupportFragmentManager()
+                        .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+        ActivityCompat.requestPermissions(this, new
+                        String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                PackageManager.PERMISSION_GRANTED);
+        ActivityCompat.requestPermissions(this, new
+                        String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                PackageManager.PERMISSION_GRANTED);
+    }
+    @Override
+    public void onMapReady (GoogleMap googleMap){
+        mMap = googleMap;
+        // Add a marker in Sydney and move the camera
+        LatLng sydney = new LatLng(-34, 151);
+        mMap.addMarker(new
+                MarkerOptions().position(sydney).title("Marker in Sydney"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(@NonNull Location location)
+            {
+                latLng = new
+                        LatLng(location.getLatitude(),location.getLongitude());
+                mMap.addMarker(new MarkerOptions().position(latLng
+                ).title("My position"));
+
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+            }
+        };
+        locationManager = (LocationManager)
+                getSystemService(LOCATION_SERVICE);
+        try{
+
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,MIN_TIME,MIN_DIST,locationListener);}
+        catch (SecurityException e){
+            e.printStackTrace();
+        }
+    }
+}
+
+
+manifest.xml
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission
+        android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-feature android:name="android.hardware.location.gps"/>
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.AppCompat"
+        tools:targetApi="31">
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyC18ydU494uxTDaPgc72EzL1eSAvokDf0w" />
+        <activity
+            android:name=".MapsActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER"
+                    />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>
+
+
+
+activity_maps.xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<fragment xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:map="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/map"
+    android:name="com.google.android.gms.maps.SupportMapFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MapsActivity" />
+
+
+activity_main.xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:map="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/map"
+    android:name="com.google.android.gms.maps.SupportMapFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.mylocation.mylocation.MapsActivity" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+
+build_gradle
+
+plugins {
+    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.googleAndroidLibrariesMapsplatformSecretsGradlePlugin)
+}
+
+android {
+    namespace = "com.example.maps"
+    compileSdk = 34
+
+    defaultConfig {
+        applicationId = "com.example.maps"
+        minSdk = 24
+        targetSdk = 34
+        versionCode = 1
+        versionName = "1.0"
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+    dataBinding{
+        enable=true
+    }
+    buildFeatures{
+        viewBinding =true;
+    }
+}
+
+dependencies {
+
+    implementation(libs.appcompat)
+    implementation(libs.material)
+    implementation(libs.activity)
+    implementation(libs.constraintlayout)
+    implementation(libs.play.services.maps)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.ext.junit)
+    androidTestImplementation(libs.espresso.core)
+}

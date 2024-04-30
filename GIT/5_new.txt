@@ -1,0 +1,378 @@
+1) 
+activity_main.xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="#8080"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <TextView
+        android:id="@+id/longpress"
+        android:layout_width="285dp"
+        android:layout_height="48dp"
+        android:gravity="center"
+        android:text="Long Press"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.492"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:layout_constraintVertical_bias="0.165" />
+
+    <Button
+        android:id="@+id/popup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Popup"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/dailog"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/longpress"
+        app:layout_constraintVertical_bias="0.188" />
+
+    <Button
+        android:id="@+id/dailog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Dailog"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/popup"
+        app:layout_constraintTop_toBottomOf="@+id/longpress"
+        app:layout_constraintVertical_bias="0.188" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="282dp"
+        android:layout_height="127dp"
+        android:gravity="center"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/popup"
+        app:layout_constraintVertical_bias="0.5" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+2) 
+
+MainActivity.java
+
+package com.myapplication.a5_menu;
+
+
+import android.os.Bundle;
+import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.PopupMenu;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
+public class MainActivity extends AppCompatActivity implements DialogFile.ExampleDialogListener {
+    TextView textView, textViewapplytext;
+    Button buttonpopup,buttondailog;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+        setSupportActionBar(findViewById(R.id.toolbar));
+        textView = findViewById(R.id.longpress);
+        buttonpopup = findViewById(R.id.popup);
+        buttondailog = findViewById(R.id.dailog);
+        registerForContextMenu(textView);
+        textViewapplytext = findViewById(R.id.textView2);
+
+        buttonpopup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PopupMenu popupMenu = new PopupMenu(MainActivity.this,buttonpopup);
+                popupMenu.getMenuInflater().inflate(R.menu.popup,popupMenu.getMenu());
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+                        Toast.makeText(MainActivity.this, "You clicked "+menuItem.getTitle(), Toast.LENGTH_SHORT).show();
+
+                        return true;
+                    }
+                });
+
+                popupMenu.show();
+            }
+
+
+        });
+        buttondailog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DialogFile dialogFile = new DialogFile();
+                dialogFile.show(getSupportFragmentManager(),"example dialog");
+            }
+        });
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.option,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if(id == R.id.settings){
+            Toast.makeText(this, "Settings selected!!", Toast.LENGTH_SHORT).show();
+            return true;
+        } else if (id==R.id.refresh) {
+            Toast.makeText(this, "Refresh Selected!!", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater menuInflater =getMenuInflater();
+        menuInflater.inflate(R.menu.context,menu);
+
+
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if(id == R.id.copy){
+            Toast.makeText(this, "copy selected!!", Toast.LENGTH_SHORT).show();
+            return true;
+        } else if (id==R.id.paste) {
+            Toast.makeText(this, "paste Selected!!", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        else if (id==R.id.cut) {
+            Toast.makeText(this, "cut Selected!!", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+
+
+        return super.onContextItemSelected(item);
+    }
+
+    @Override
+    public void applytext(String username, String password) {
+        textViewapplytext.setText(username+"   "+password);
+    }
+}
+
+
+3)
+
+DialogFile.java
+
+package com.myapplication.a5_menu;
+
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.EditText;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatDialogFragment;
+
+public class DialogFile extends AppCompatDialogFragment  {
+
+    EditText  editTextUserName, editTextPassword;
+    ExampleDialogListener exampleDialogListener;
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+        LayoutInflater layoutInflater = getActivity().getLayoutInflater();
+        View view = layoutInflater.inflate(R.layout.activity_dialog_file,null);
+        editTextUserName = view.findViewById(R.id.username);
+        editTextPassword = view.findViewById(R.id.password);
+        builder.setView(view).setTitle("Login")
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                }).setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        String username = editTextUserName.getText().toString();
+                        String password = editTextPassword.getText().toString();
+                        exampleDialogListener.applytext(username,password);
+                    }
+                });
+
+        return builder.create();
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        exampleDialogListener = (ExampleDialogListener) context;
+    }
+
+    public interface ExampleDialogListener{
+        void applytext(String username,String password);
+    }
+}
+
+4)
+
+activity_dialog_file.xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <EditText
+        android:id="@+id/username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="UserName"
+        android:inputType="text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.298" />
+
+    <EditText
+        android:id="@+id/password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Password"
+        android:inputType="textPassword"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/username"
+        app:layout_constraintVertical_bias="0.1" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+5)
+
+popup.xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/java"
+        android:title="Java">
+
+    </item>
+    <item
+        android:id="@+id/cpp"
+        android:title="C++">
+
+    </item>
+    <item
+        android:id="@+id/python"
+        android:title="Python">
+
+    </item>
+</menu>
+
+6)
+
+option.xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/settings"
+        android:title="Settings">
+
+    </item>
+    <item
+        android:id="@+id/refresh"
+        android:title="Refresh">
+
+    </item>
+
+</menu>
+
+7)
+
+context.xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/cut"
+        android:title="Cut">
+
+    </item>
+    <item
+        android:id="@+id/copy"
+        android:title="Copy">
+
+    </item>
+    <item
+        android:id="@+id/paste"
+        android:title="Paste">
+
+    </item>
+
+</menu>

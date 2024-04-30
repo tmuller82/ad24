@@ -1,0 +1,69 @@
+MainActivity.java
+
+package com.myapplication.app7new;
+
+import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+import com.denzcoskun.imageslider.ImageSlider;
+import com.denzcoskun.imageslider.constants.ScaleTypes;
+import com.denzcoskun.imageslider.models.SlideModel;
+import java.util.ArrayList;
+import java.util.List;
+public class MainActivity extends AppCompatActivity {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        ImageSlider imageSlider=findViewById(R.id.imageslider);
+        List<SlideModel> slideModelslist=new ArrayList<>();
+        slideModelslist.add(new SlideModel(R.drawable.image1,"1", ScaleTypes.FIT));
+        slideModelslist.add(new SlideModel(R.drawable.image2,"2",ScaleTypes.FIT));
+        imageSlider.setImageList(slideModelslist);
+    }
+}
+
+
+/// build.gradle implementation("com.github.denzcoskun:ImageSlideshow:0.1.2")
+////settings.gridla maven ("https://jitpack.io")
+
+
+activity_main.xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+    <com.denzcoskun.imageslider.ImageSlider
+        android:id="@+id/imageslider"
+        android:layout_width="300dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="408dp"
+        app:iss_auto_cycle="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        tools:ignore="MissingClass" />
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="69dp"
+        android:layout_marginEnd="60dp"
+        android:layout_marginBottom="22dp"
+        android:text="Image Slider"
+        android:textColor="#673AB7"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/imageslider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.634"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.5"
+        />
+</androidx.constraintlayout.widget.ConstraintLayout>

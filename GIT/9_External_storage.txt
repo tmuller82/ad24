@@ -1,0 +1,183 @@
+MainActivity.java
+
+package com.example.externaldatabase;
+
+import android.os.Bundle;
+
+import androidx.appcompat.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+
+public class MainActivity extends AppCompatActivity {
+
+    EditText editTextFileName,editTextData;
+    Button saveButton,readButton;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        editTextFileName=findViewById(R.id.editText1);
+        editTextData=findViewById(R.id.editText2);
+        saveButton=findViewById(R.id.button1);
+        readButton=findViewById(R.id.button2);
+
+        //Performing action on save button
+        saveButton.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View arg0) {
+                String filename=editTextFileName.getText().toString();
+                String data=editTextData.getText().toString();
+
+                FileOutputStream fos;
+                try {
+                    File myFile = new File("/sdcard/"+filename);
+                    myFile.createNewFile();
+                    FileOutputStream fOut = new FileOutputStream(myFile);
+                    OutputStreamWriter myOutWriter = new OutputStreamWriter(fOut);
+                    myOutWriter.append(data);
+                    myOutWriter.close();
+                    fOut.close();
+                    Toast.makeText(getApplicationContext(),filename + "saved",Toast.LENGTH_LONG).show();
+                } catch (FileNotFoundException e) {e.printStackTrace();}
+                catch (IOException e) {e.printStackTrace();}
+            }
+        });
+
+        //Performing action on Read Button
+        readButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View arg0) {
+                String filename=editTextFileName.getText().toString();
+                StringBuffer stringBuffer = new StringBuffer();
+                String aDataRow = "";
+                String aBuffer = "";
+                try {
+                    File myFile = new File("/sdcard/"+filename);
+                    FileInputStream fIn = new FileInputStream(myFile);
+                    BufferedReader myReader = new BufferedReader(
+                            new InputStreamReader(fIn));
+                    while ((aDataRow = myReader.readLine()) != null) {
+                        aBuffer += aDataRow + "\n";
+                    }
+                    myReader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                Toast.makeText(getApplicationContext(),aBuffer,Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+}
+
+
+
+
+manifest.xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.AppCompat">
+        <activity android:name="com.example.externaldatabase.MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
+
+
+
+activity.xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <EditText
+        android:id="@+id/editText1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="24dp"
+        android:ems="10" >
+
+        <requestFocus />
+    </EditText>
+
+    <EditText
+        android:id="@+id/editText2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/editText1"
+        android:layout_below="@+id/editText1"
+        android:layout_marginTop="24dp"
+        android:ems="10" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/editText1"
+        android:layout_alignBottom="@+id/editText1"
+        android:layout_alignParentLeft="true"
+        android:text="File Name:" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/editText2"
+        android:layout_alignBottom="@+id/editText2"
+        android:layout_alignParentLeft="true"
+        android:text="Data:" />
+
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/editText2"
+        android:layout_below="@+id/editText2"
+        android:layout_marginLeft="70dp"
+        android:layout_marginTop="16dp"
+        android:text="save" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/button1"
+        android:layout_alignBottom="@+id/button1"
+        android:layout_toRightOf="@+id/button1"
+        android:text="read" />
+</RelativeLayout>

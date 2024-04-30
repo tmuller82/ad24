@@ -1,0 +1,146 @@
+package com.example.myapplication;
+
+import android.media.Image;
+import android.os.Bundle;
+import android.widget.GridView;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.myapplication.ImageAdapter;
+import com.example.myapplication.R;
+
+public class MainActivity extends AppCompatActivity {
+
+    private GridView gridView;
+    private ImageAdapter adapter;
+
+    private String[] itemTitles = {"Home", "Contacts", "Account", "Transaction History", "Add Card", "Account"};
+    private int[] itemIcons = {
+            R.drawable.image1,
+            R.drawable.image2,
+            R.drawable.image3,
+            R.drawable.image4,
+            R.drawable.image5,
+            R.drawable.image6
+    };
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        gridView = findViewById(R.id.gridView);
+        adapter = new ImageAdapter(this, itemTitles, itemIcons);
+        gridView.setAdapter(adapter);
+    }
+}
+
+
+
+
+
+ImageAdapter.java
+
+package com.example.myapplication;
+
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.TextView;
+import com.example.myapplication.R;
+
+public class ImageAdapter extends BaseAdapter {
+
+    private Context mContext;
+    private String[] itemTitles;
+    private int[] itemIcons;
+
+    public ImageAdapter(Context context, String[] titles, int[] icons) {
+        mContext = context;
+        itemTitles = titles;
+        itemIcons = icons;
+    }
+
+    @Override
+    public int getCount() {
+        return itemTitles.length;
+    }
+
+    @Override
+    public Object getItem(int position) {
+        return itemTitles[position];
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        if (convertView == null) {
+            convertView = LayoutInflater.from(mContext).inflate(R.layout.grid_item, parent, false);
+        }
+
+        ImageView imageView = convertView.findViewById(R.id.imageView);
+        TextView textViewTitle = convertView.findViewById(R.id.textViewTitle);
+
+        imageView.setImageResource(itemIcons[position]);
+        textViewTitle.setText(itemTitles[position]);
+
+        return convertView;
+    }
+}
+
+
+activity_main.xml
+
+<!-- res/layout/activity_main.xml -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <GridView
+        android:id="@+id/gridView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:columnWidth="100dp"
+        android:numColumns="auto_fit"
+        android:verticalSpacing="10dp"
+        android:horizontalSpacing="10dp"
+        android:stretchMode="columnWidth"
+        android:gravity="center"/>
+
+</RelativeLayout>
+
+
+grid_item.xml
+
+<!-- res/layout/grid_item.xml -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:scaleType="fitCenter"/>
+
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text=""
+        android:textSize="12sp"/>
+
+</LinearLayout>
+
